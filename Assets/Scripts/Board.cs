@@ -1,19 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Board : MonoBehaviour
 {
     public int width = 8;
     public int height = 8;
-
+    public int offset;
     public GameObject tilePrefab;
     public GameObject[] dots;
-    private BackgroundTile[,] allTiles;
+    public GameObject destroyEffect;
+    public GameObject soundsEffects;
+    public Text scoreText;
     public GameObject[,] allDots;
+
+    private BackgroundTile[,] allTiles;
+    private int scores;
 
     private void Start()
     {
+        scores = 0;
+        scoreText.text = $"Набрано очков:\n{scores}";
         allTiles = new BackgroundTile[width, height];
         allDots = new GameObject[width, height];
         SetUp();
@@ -40,6 +48,8 @@ public class Board : MonoBehaviour
                 maxIterations = 0;
 
                 GameObject dot = Instantiate(dots[dotToUse], tempPosition, Quaternion.identity);
+                dot.GetComponent<Dot>().row = y;
+                dot.GetComponent<Dot>().column = x;
                 dot.transform.parent = this.transform;
                 dot.name = "( " + x + ", " + y + " )";
                 allDots[x, y] = dot;
@@ -84,6 +94,12 @@ public class Board : MonoBehaviour
     {
         if (allDots[column, row].GetComponent<Dot>().isMatched)
         {
+            GameObject particle = Instantiate(destroyEffect, allDots[column, row].transform.position, Quaternion.identity); // add particle system
+            soundsEffects.GetComponent<AudioSource>().Play(); // add sound
+            scores++; // add scores
+            scoreText.text = $"Набрано очков:\n{scores}"; // show scores
+            Destroy(particle, 0.35f);
+
             Destroy(allDots[column, row]);
             allDots[column, row] = null;
         }
@@ -135,10 +151,12 @@ public class Board : MonoBehaviour
             {
                 if (allDots[i, j] == null)
                 {
-                    Vector2 tempPosition = new Vector2(i, j);
+                    Vector2 tempPosition = new Vector2(i, j + offset);
                     int dotToUse = Random.Range(0, dots.Length);
                     GameObject piece = Instantiate(dots[dotToUse], tempPosition, Quaternion.identity);
                     allDots[i, j] = piece;
+                    piece.GetComponent<Dot>().row = j;
+                    piece.GetComponent<Dot>().column = i;
                 }
             }
         }
