@@ -6,4 +6,4 @@
  Игроку отводится на матч 60 секунд. Дальше игра завершается.
  
 ## Скриншот
-![Скриншот](https://github.com/Ortem-a/MatchThree/ForRepositoryDecorations/screenshot.png)
+[Скриншот](https://github.com/Ortem-a/MatchThree/ForRepositoryDecorations/screenshot.png)
